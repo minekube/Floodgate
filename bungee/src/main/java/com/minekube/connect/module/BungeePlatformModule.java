@@ -32,9 +32,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.minekube.connect.BungeePlugin;
 import com.minekube.connect.api.FloodgateApi;
 import com.minekube.connect.api.logger.FloodgateLogger;
-import com.minekube.connect.floodgate.BungeePlugin;
 import com.minekube.connect.inject.CommonPlatformInjector;
 import com.minekube.connect.inject.bungee.BungeeInjector;
 import com.minekube.connect.listener.BungeeListenerRegistration;
@@ -51,9 +51,6 @@ import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.geysermc.floodgate.platform.pluginmessage.PluginMessageUtils;
-import org.geysermc.floodgate.pluginmessage.PluginMessageManager;
-import org.geysermc.floodgate.pluginmessage.PluginMessageRegistration;
 
 @RequiredArgsConstructor
 public final class BungeePlatformModule extends AbstractModule {
@@ -101,20 +98,6 @@ public final class BungeePlatformModule extends AbstractModule {
     @Singleton
     public ListenerRegistration<Listener> listenerRegistration() {
         return new BungeeListenerRegistration(plugin);
-    }
-
-    @Provides
-    @Singleton
-    public PluginMessageUtils pluginMessageUtils(
-            PluginMessageManager manager,
-            FloodgateLogger logger) {
-        return new BungeePluginMessageUtils(manager, logger);
-    }
-
-    @Provides
-    @Singleton
-    public PluginMessageRegistration pluginMessageRegistration() {
-        return new BungeePluginMessageRegistration();
     }
 
     @Provides
