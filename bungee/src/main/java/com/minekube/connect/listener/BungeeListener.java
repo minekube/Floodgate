@@ -41,7 +41,6 @@ import java.util.UUID;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.InitialHandler;
@@ -83,6 +82,7 @@ public final class BungeeListener implements Listener {
             connection.setOnlineMode(false);
             connection.setUniqueId(ctx.getPlayer().getUniqueId());
             ReflectionUtils.setValue(connection, PLAYER_NAME, ctx.getPlayer().getUsername());
+            // TODO robin: what about profile properties? (but why is skin already showing)
         });
     }
 
@@ -103,14 +103,14 @@ public final class BungeeListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onPostLogin(PostLoginEvent event) {
-        // To fix the February 2 2022 Mojang authentication changes
-        FloodgatePlayer player = api.getPlayer(event.getPlayer().getUniqueId());
-        if (player != null) {
+//    @EventHandler(priority = EventPriority.LOWEST)
+//    public void onPostLogin(PostLoginEvent event) {
+    // To fix the February 2 2022 Mojang authentication changes
+//        FloodgatePlayer player = api.getPlayer(event.getPlayer().getUniqueId());
+//        if (player != null) {
 //            skinApplier.applySkin(player, new SkinData("", ""));
-        }
-    }
+//        }
+//    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDisconnect(PlayerDisconnectEvent event) {

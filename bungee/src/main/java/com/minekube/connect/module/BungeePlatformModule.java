@@ -49,12 +49,18 @@ import com.minekube.connect.util.BungeeCommandUtil;
 import com.minekube.connect.util.LanguageManager;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 
 @RequiredArgsConstructor
 public final class BungeePlatformModule extends AbstractModule {
     private final BungeePlugin plugin;
+
+    @Override
+    protected void configure() {
+        bind(ProxyServer.class).toInstance(plugin.getProxy());
+    }
 
     @Provides
     @Singleton
@@ -112,8 +118,9 @@ public final class BungeePlatformModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public CommonPlatformInjector platformInjector(FloodgateLogger logger) {
-        return new BungeeInjector(logger);
+    public CommonPlatformInjector platformInjector(FloodgateLogger logger, ProxyServer proxy,
+                                                   Plugin plugin) {
+        return new BungeeInjector(logger, proxy, plugin);
     }
 
     @Provides
