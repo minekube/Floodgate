@@ -47,6 +47,7 @@ import com.minekube.connect.packet.PacketHandlersImpl;
 import com.minekube.connect.util.LanguageManager;
 import java.nio.file.Path;
 import lombok.RequiredArgsConstructor;
+import okhttp3.OkHttpClient;
 
 @RequiredArgsConstructor
 public class CommonModule extends AbstractModule {
@@ -112,5 +113,18 @@ public class CommonModule extends AbstractModule {
     @Singleton
     public HandshakeHandlersImpl handshakeHandlers() {
         return new HandshakeHandlersImpl();
+    }
+
+    @Provides
+    @Singleton
+    public OkHttpClient okHttpClient() {
+        return new OkHttpClient.Builder()
+//                .connectionPool(new ConnectionPool()) // TODO increase maxIdleConnections/maxRequests
+                .addInterceptor(chain -> chain.proceed(chain.request()
+//                        .newBuilder()
+//                        .addHeader() // TODO add common client metadata to every request
+//                        .build()
+                ))
+                .build();
     }
 }

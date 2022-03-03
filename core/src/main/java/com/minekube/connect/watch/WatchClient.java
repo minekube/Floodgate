@@ -25,29 +25,86 @@
 
 package com.minekube.connect.watch;
 
-import io.grpc.ManagedChannel;
+import com.google.protobuf.InvalidProtocolBufferException;
 import io.grpc.stub.StreamObserver;
 import java.util.concurrent.atomic.AtomicReference;
-import minekube.connect.v1alpha1.WatchServiceGrpc;
-import minekube.connect.v1alpha1.WatchServiceGrpc.WatchServiceStub;
 import minekube.connect.v1alpha1.WatchServiceOuterClass.SessionRejection;
 import minekube.connect.v1alpha1.WatchServiceOuterClass.WatchRequest;
 import minekube.connect.v1alpha1.WatchServiceOuterClass.WatchResponse;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class WatchClient {
 
-    private final WatchServiceStub asyncStub;
+    private final OkHttpClient httpClient;
 
-    public WatchClient(WatchServiceStub asyncStub) {
-        this.asyncStub = asyncStub;
-    }
-
-    public WatchClient(ManagedChannel channel) {
-        this.asyncStub = WatchServiceGrpc.newStub(channel);
+    public WatchClient(OkHttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     public void watch(Watcher watcher) {
-        AtomicReference<StreamObserver<WatchRequest>> reqStream = new AtomicReference<>();
+        Request request = new Request.Builder()
+                .url("ws://watch.connect.api.minekube.com") // TODO default env var
+                .addHeader("Connect-Endpoint", "server1") // TODO configurable endpoint name
+                .build();
+
+        httpClient.newWebSocket(request, new WebSocketListener() {
+            @Override
+            public void onClosed(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
+                watcher.onCompleted();
+            }
+
+            @Override
+            public void onClosing(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
+                webSocket.close(1000, null);
+            }
+
+            @Override
+            public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t,
+                                  @Nullable Response response) {
+                watcher.onError(t);
+            }
+
+            @Override
+            public void onMessage(@NotNull WebSocket webSocket, @NotNull ByteString bytes) {
+                WatchResponse res;
+                try {
+                    res = WatchResponse.parseFrom(bytes.asByteBuffer());
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                    webSocket.close(1002, e.getLocalizedMessage());
+                    return;
+                }
+
+                SessionProposal prop = new SessionProposal(
+                        res.getSession(),
+                        reason -> webSocket.send(ByteString.of(WatchRequest.newBuilder()
+                                .setSessionRejection(
+                                        SessionRejection.newBuilder()
+                                                .setId(res.getSession().getId())
+                                                .setReason(reason)
+                                                .build())
+                                .build()
+                                .toByteArray()
+                        ))
+                );
+                watcher.onProposal(prop);
+            }
+
+            @Override
+            public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
+                // TODO log connected
+            }
+        });
+
+        AtomicReference<StreamObserver<
+                WatchRequest>> reqStream = new AtomicReference<>();
         StreamObserver<WatchResponse> resStream = new StreamObserver<WatchResponse>() {
             @Override
             public void onNext(final WatchResponse res) {
