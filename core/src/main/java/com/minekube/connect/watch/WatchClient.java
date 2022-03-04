@@ -25,9 +25,8 @@
 
 package com.minekube.connect.watch;
 
+import com.google.inject.Inject;
 import com.google.protobuf.InvalidProtocolBufferException;
-import io.grpc.stub.StreamObserver;
-import java.util.concurrent.atomic.AtomicReference;
 import minekube.connect.v1alpha1.WatchServiceOuterClass.SessionRejection;
 import minekube.connect.v1alpha1.WatchServiceOuterClass.WatchRequest;
 import minekube.connect.v1alpha1.WatchServiceOuterClass.WatchResponse;
@@ -41,17 +40,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WatchClient {
+    private static final String ENDPOINT_HEADER = "Connect-Endpoint";
+    private static final String WATCH_URL = System.getenv().getOrDefault(
+            "CONNECT_WATCH_URL", "ws://connect.minekube.net/watch");
 
     private final OkHttpClient httpClient;
 
+    @Inject
     public WatchClient(OkHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
     public void watch(Watcher watcher) {
         Request request = new Request.Builder()
-                .url("ws://watch.connect.api.minekube.com") // TODO default env var
-                .addHeader("Connect-Endpoint", "server1") // TODO configurable endpoint name
+                .url(WATCH_URL) // TODO default env var
+                .addHeader(ENDPOINT_HEADER, "server1") // TODO configurable endpoint name
                 .build();
 
         httpClient.newWebSocket(request, new WebSocketListener() {
@@ -99,41 +102,10 @@ public class WatchClient {
 
             @Override
             public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
-                // TODO log connected
+                // TODO log connected(?)
             }
         });
 
-        AtomicReference<StreamObserver<
-                WatchRequest>> reqStream = new AtomicReference<>();
-        StreamObserver<WatchResponse> resStream = new StreamObserver<WatchResponse>() {
-            @Override
-            public void onNext(final WatchResponse res) {
-                if (!res.hasSession()) {
-                    return;
-                }
-                SessionProposal prop = new SessionProposal(
-                        res.getSession(),
-                        reason -> reqStream.get().onNext(WatchRequest.newBuilder()
-                                .setSessionRejection(SessionRejection.newBuilder()
-                                        .setId(res.getSession().getId())
-                                        .setReason(reason)
-                                        .build())
-                                .build())
-                );
-                watcher.onProposal(prop);
-            }
-
-            @Override
-            public void onError(final Throwable t) {
-                watcher.onError(t);
-            }
-
-            @Override
-            public void onCompleted() {
-                watcher.onCompleted();
-            }
-        };
-        reqStream.set(asyncStub.watch(resStream));
     }
 
 }
