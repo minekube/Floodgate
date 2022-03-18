@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
 public class WatchClient {
     private static final String ENDPOINT_HEADER = "Connect-Endpoint";
     private static final String WATCH_URL = System.getenv().getOrDefault(
-            "CONNECT_WATCH_URL", "wss://connect.minekube.net/watch");
+            "CONNECT_WATCH_URL", "wss://connect-watch.minekube.net");
 
     private final OkHttpClient httpClient;
     private final ConnectConfig config;
