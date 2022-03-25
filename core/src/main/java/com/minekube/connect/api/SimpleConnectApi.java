@@ -59,7 +59,7 @@ public class SimpleConnectApi implements ConnectApi {
     }
 
     @Override
-    public boolean isFloodgatePlayer(UUID uuid) {
+    public boolean isConnectPlayer(UUID uuid) {
         return getPlayer(uuid) != null;
     }
 

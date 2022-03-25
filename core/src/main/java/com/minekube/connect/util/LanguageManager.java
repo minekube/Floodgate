@@ -27,8 +27,8 @@ package com.minekube.connect.util;
 
 import com.google.common.base.Joiner;
 import com.minekube.connect.api.logger.ConnectLogger;
+import com.minekube.connect.config.ConfigHolder;
 import com.minekube.connect.config.ConnectConfig;
-import com.minekube.connect.config.FloodgateConfigHolder;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -48,7 +48,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class LanguageManager {
     private final Map<String, Properties> localeMappings = new HashMap<>();
-    private final FloodgateConfigHolder configHolder;
+    private final ConfigHolder configHolder;
     private final ConnectLogger logger;
 
     /**

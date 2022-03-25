@@ -30,7 +30,7 @@ import io.netty.channel.Channel;
 public interface InjectorAddon {
     /**
      * Called when injecting a specific channel (every client that is connected to the server has
-     * his own channel). Internally used for the Floodgate debugger and data handler but can also be
+     * his own channel). Internally used for the debugger and data handler but can also be
      * used for third party things.
      *
      * @param channel  the channel that the injector is injecting

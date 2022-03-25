@@ -29,8 +29,8 @@ import java.net.SocketAddress;
 
 /**
  * The global interface of all the Platform Injectors. The injector can be used for various things.
- * It is used internally for getting Floodgate data out of the handshake packet and for debug mode,
- * but there is also an option to add your own addons. Note that every Floodgate platform that
+ * It is used internally for intercepting handshake/login packets and for debug mode,
+ * but there is also an option to add your own addons. Note that every platform that
  * supports netty should implement this, but the platform implementation isn't required to implement
  * this.
  */
@@ -42,8 +42,7 @@ public interface PlatformInjector {
     SocketAddress getServerSocketAddress();
 
     /**
-     * Injects the server connection. This will allow various addons (like getting the Floodgate
-     * data and debug mode) to work.
+     * Injects the server connection.
      *
      * @return true if the connection has successfully been injected
      * @throws Exception if something went wrong while injecting the server connection
@@ -58,7 +57,7 @@ public interface PlatformInjector {
     boolean isInjected();
 
     /**
-     * Adds an addon to the addon list of the Floodgate Injector (the addon is called when Floodgate
+     * Adds an addon to the addon list of the Injector (the addon is called when Connect
      * injects a channel). See {@link InjectorAddon} for more info.
      *
      * @param addon the addon to add to the addon list

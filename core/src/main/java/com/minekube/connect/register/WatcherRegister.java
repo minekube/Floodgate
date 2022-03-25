@@ -33,13 +33,16 @@ import com.minekube.connect.api.inject.PlatformInjector;
 import com.minekube.connect.api.logger.ConnectLogger;
 import com.minekube.connect.network.netty.LocalSession;
 import com.minekube.connect.tunnel.Tunneler;
+import com.minekube.connect.util.backoff.ExponentialBackOff;
 import com.minekube.connect.watch.SessionProposal;
 import com.minekube.connect.watch.SessionProposal.State;
 import com.minekube.connect.watch.WatchClient;
 import com.minekube.connect.watch.Watcher;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+import okhttp3.WebSocket;
 
 /**
  * Starts watching for session proposals for connecting players.
@@ -51,9 +54,71 @@ public class WatcherRegister {
     @Inject private ConnectLogger logger;
     @Inject private SimpleConnectApi api;
 
+    private WebSocket ws;
+    private ExponentialBackOff backOffPolicy;
+    private final AtomicBoolean started = new AtomicBoolean();
+
     @Inject
     public void start() {
-        watchClient.watch(new WatcherImpl());
+        if (started.compareAndSet(false, true)) {
+            backOffPolicy = new ExponentialBackOff.Builder()
+                    .setMaxElapsedTimeMillis(Integer.MAX_VALUE) // 24.8 days
+                    .setMaxIntervalMillis(300000) // 5 minutes
+                    .build();
+            watch();
+        }
+    }
+
+    public void stop() {
+        if (ws != null) {
+            if (started.compareAndSet(true, false)) {
+                logger.info("Stopped watching for sessions");
+            }
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+            if (retryTask != null) {
+                retryTask.cancel();
+                retryTask = null;
+            }
+            ws.close(1000, "watcher stopped");
+            ws = null;
+        }
+    }
+
+    private Timer timer;
+    private TimerTask retryTask;
+
+    private void retry() {
+        if (started.get()) {
+            if (timer == null) {
+                timer = new Timer();
+            }
+            if (retryTask != null) {
+                retryTask.cancel();
+            }
+            retryTask = new TimerTask();
+            try {
+                timer.schedule(retryTask, backOffPolicy.nextBackOffMillis());
+            } catch (IOException e) {
+                logger.error("nextBackOffMillis error", e);
+            }
+        }
+    }
+
+    private class TimerTask extends java.util.TimerTask {
+        @Override
+        public void run() {
+            if (started.get()) {
+                watch();
+            }
+        }
+    }
+
+
+    private void watch() {
+        ws = watchClient.watch(new WatcherImpl());
     }
 
     private class WatcherImpl implements Watcher {
@@ -102,12 +167,7 @@ public class WatcherRegister {
                     )
             );
             logger.info("Reconnecting in {}s ...", RECONNECT_AFTER_ERR.getSeconds());
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    start();
-                }
-            }, RECONNECT_AFTER_ERR.toMillis());
+            retry();
         }
     }
 
