@@ -12,7 +12,6 @@ dependencies {
     api(projects.api)
 
     api("com.google.inject", "guice", Versions.guiceVersion)
-    api("org.java-websocket", "Java-WebSocket", Versions.javaWebsocketVersion)
     api("cloud.commandframework", "cloud-core", Versions.cloudVersion)
     api("org.yaml", "snakeyaml", Versions.snakeyamlVersion)
     api("org.bstats", "bstats-base", Versions.bstatsVersion)
