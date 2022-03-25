@@ -41,7 +41,7 @@ public interface InjectorAddon {
     /**
      * Called when the channel has been closed. Note that this method will be called for every
      * closed connection (if it is injected), so it'll also run this method for closed connections
-     * between a server and the proxy (when Floodgate is running on a proxy).
+     * between a server and the proxy (when Connect is running on a proxy).
      *
      * @param channel the channel that the injector injected
      */

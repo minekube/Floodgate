@@ -43,7 +43,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Manages translations for strings in Floodgate
+ * Manages translations for strings
  */
 @RequiredArgsConstructor
 public final class LanguageManager {
@@ -112,7 +112,7 @@ public final class LanguageManager {
     }
 
     /**
-     * Loads a Floodgate locale from resources; if the file doesn't exist it just logs a warning
+     * Loads a locale from resources; if the file doesn't exist it just logs a warning
      *
      * @param locale locale to load
      * @return true if the locale has been found
@@ -135,7 +135,7 @@ public final class LanguageManager {
             try (Reader reader = new InputStreamReader(localeStream, StandardCharsets.UTF_8)) {
                 localeProp.load(reader);
             } catch (Exception e) {
-                throw new AssertionError("Failed to load Floodgate locale", e);
+                throw new AssertionError("Failed to load locale", e);
             }
 
             // insert the locale into the mappings
@@ -148,7 +148,7 @@ public final class LanguageManager {
     }
 
     /**
-     * Get a formatted language string with the default locale for Floodgate
+     * Get a formatted language string with the default locale
      *
      * @param key    language string to translate
      * @param values values to put into the string
@@ -159,7 +159,7 @@ public final class LanguageManager {
     }
 
     /**
-     * Get a formatted language string with the given locale for Floodgate
+     * Get a formatted language string with the given locale
      *
      * @param key    language string to translate
      * @param locale locale to translate to
@@ -200,10 +200,10 @@ public final class LanguageManager {
     }
 
     /**
-     * Ensures that the given locale is supported by Floodgate
+     * Ensures that the given locale is supported
      *
      * @param locale the locale to validate
-     * @return true if the given locale is supported by Floodgate
+     * @return true if the given locale is supported
      */
     private boolean isValidLanguage(String locale) {
         if (locale == null) {
@@ -214,7 +214,7 @@ public final class LanguageManager {
                 .getResource("/languages/texts/" + locale + ".properties");
 
         if (languageFile == null) {
-            logger.warn(locale + " is not a supported Floodgate language.");
+            logger.warn(locale + " is not a supported language.");
             return false;
         }
         return true;

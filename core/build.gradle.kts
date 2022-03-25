@@ -4,7 +4,7 @@ import net.kyori.blossom.BlossomExtension
 plugins {
     idea // used to let Intellij recognize protobuf generated sources
     id("net.kyori.blossom")
-    id("floodgate.shadow-conventions")
+    id("connect.shadow-conventions")
     id("com.google.protobuf")
 }
 

@@ -1,5 +1,5 @@
 plugins {
-    id("floodgate.shadow-conventions")
+    id("connect.shadow-conventions")
     id("com.jfrog.artifactory")
     id("maven-publish")
 }

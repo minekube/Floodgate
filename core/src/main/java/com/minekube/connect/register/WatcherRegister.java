@@ -33,6 +33,8 @@ import com.minekube.connect.api.inject.PlatformInjector;
 import com.minekube.connect.api.logger.ConnectLogger;
 import com.minekube.connect.network.netty.LocalSession;
 import com.minekube.connect.tunnel.Tunneler;
+import com.minekube.connect.util.Utils;
+import com.minekube.connect.util.backoff.BackOff;
 import com.minekube.connect.util.backoff.ExponentialBackOff;
 import com.minekube.connect.watch.SessionProposal;
 import com.minekube.connect.watch.SessionProposal.State;
@@ -62,8 +64,10 @@ public class WatcherRegister {
     public void start() {
         if (started.compareAndSet(false, true)) {
             backOffPolicy = new ExponentialBackOff.Builder()
+                    .setInitialIntervalMillis(1000) // 1 second
                     .setMaxElapsedTimeMillis(Integer.MAX_VALUE) // 24.8 days
                     .setMaxIntervalMillis(300000) // 5 minutes
+                    .setMultiplier(1.5) // 50% increase per back off
                     .build();
             watch();
         }
@@ -92,18 +96,27 @@ public class WatcherRegister {
 
     private void retry() {
         if (started.get()) {
-            if (timer == null) {
-                timer = new Timer();
-            }
             if (retryTask != null) {
                 retryTask.cancel();
             }
-            retryTask = new TimerTask();
+            if (timer == null) {
+                timer = new Timer();
+            }
+            long millis;
             try {
-                timer.schedule(retryTask, backOffPolicy.nextBackOffMillis());
+                millis = backOffPolicy.nextBackOffMillis();
+                if (millis == BackOff.STOP) {
+                    stop();
+                    return;
+                }
             } catch (IOException e) {
                 logger.error("nextBackOffMillis error", e);
+                return;
             }
+            retryTask = new TimerTask();
+            logger.info("Reconnecting in {}...",
+                    Utils.humanReadableFormat(Duration.ofMillis(millis)));
+            timer.schedule(retryTask, millis);
         }
     }
 
@@ -118,6 +131,9 @@ public class WatcherRegister {
 
 
     private void watch() {
+        if (ws != null) {
+            ws.close(1000, "watcher is reconnecting");
+        }
         ws = watchClient.watch(new WatcherImpl());
     }
 
@@ -166,10 +182,7 @@ public class WatcherRegister {
                                     : " (cause: " + t.getCause().getLocalizedMessage() + ")"
                     )
             );
-            logger.info("Reconnecting in {}s ...", RECONNECT_AFTER_ERR.getSeconds());
             retry();
         }
     }
-
-    private final static Duration RECONNECT_AFTER_ERR = Duration.ofSeconds(5);
 }
