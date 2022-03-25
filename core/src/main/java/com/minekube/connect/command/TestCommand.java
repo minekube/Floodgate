@@ -37,7 +37,7 @@ import com.minekube.connect.util.Constants;
 public class TestCommand implements FloodgateCommand {
     @Override
     public Command<UserAudience> buildCommand(CommandManager<UserAudience> commandManager) {
-        return commandManager.commandBuilder("floodgate-test")
+        return commandManager.commandBuilder("connect-test")
                 .senderType(UserAudience.class)
                 .handler(this::execute)
                 .build();
