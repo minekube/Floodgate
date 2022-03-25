@@ -17,8 +17,8 @@ tasks {
                 "name" to "connect",
                 "version" to fullVersion(),
                 "description" to project.description,
-                "url" to "https://geysermc.org",
-                "author" to "GeyserMC"
+                "url" to "https://minekube.com",
+                "author" to "Minekube"
             )
         }
     }

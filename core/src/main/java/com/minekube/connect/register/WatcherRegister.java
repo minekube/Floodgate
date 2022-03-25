@@ -66,7 +66,7 @@ public class WatcherRegister {
             backOffPolicy = new ExponentialBackOff.Builder()
                     .setInitialIntervalMillis(1000) // 1 second
                     .setMaxElapsedTimeMillis(Integer.MAX_VALUE) // 24.8 days
-                    .setMaxIntervalMillis(300000) // 5 minutes
+                    .setMaxIntervalMillis(60000 * 5) // 5 minutes
                     .setMultiplier(1.5) // 50% increase per back off
                     .build();
             watch();
