@@ -26,7 +26,6 @@
 package com.minekube.connect.api;
 
 import com.minekube.connect.api.player.ConnectPlayer;
-import com.minekube.connect.api.unsafe.Unsafe;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -63,6 +62,4 @@ public interface ConnectApi {
      * @return ConnectPlayer if the given uuid is a player tunneled by Connect
      */
     ConnectPlayer getPlayer(UUID uuid);
-
-    Unsafe unsafe();
 }
