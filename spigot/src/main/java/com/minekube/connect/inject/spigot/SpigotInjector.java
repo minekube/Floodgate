@@ -239,7 +239,6 @@ public final class SpigotInjector extends CommonPlatformInjector {
                 if (logger.isDebug()) {
                     logger.debug("The handler " + name +
                             " isn't a ChannelInitializer. THIS ERROR IS SAFE TO IGNORE!");
-                    e.printStackTrace();
                 }
             }
         }
