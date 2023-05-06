@@ -30,10 +30,10 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.minekube.connect.api.ProxyConnectApi;
 import com.minekube.connect.api.SimpleConnectApi;
-import com.minekube.connect.api.logger.ConnectLogger;
 import com.minekube.connect.config.ConnectConfig;
 import com.minekube.connect.config.ProxyConnectConfig;
 import java.nio.file.Path;
+import minekube.connect.v1alpha1.ConnectServiceClientInterface;
 
 public final class ProxyCommonModule extends CommonModule {
     public ProxyCommonModule(Path dataDirectory) {
@@ -56,8 +56,8 @@ public final class ProxyCommonModule extends CommonModule {
     @Provides
     @Singleton
     public ProxyConnectApi proxyApi(
-            ConnectLogger logger
+            ConnectServiceClientInterface client
     ) {
-        return new ProxyConnectApi(logger);
+        return new ProxyConnectApi(client);
     }
 }

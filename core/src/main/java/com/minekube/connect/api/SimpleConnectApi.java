@@ -29,13 +29,13 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.minekube.connect.api.logger.ConnectLogger;
 import com.minekube.connect.api.player.ConnectPlayer;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import minekube.connect.v1alpha1.ConnectServiceClientInterface;
 
 @RequiredArgsConstructor
 public class SimpleConnectApi implements ConnectApi {
@@ -69,6 +69,13 @@ public class SimpleConnectApi implements ConnectApi {
 
         // and don't forget the pending remove players
         return getPendingRemovePlayer(uuid);
+    }
+
+    private final ConnectServiceClientInterface connectServiceClient;
+
+    @Override
+    public ConnectServiceClientInterface getConnectServiceClient() {
+        return null;
     }
 
     public ConnectPlayer addPlayer(ConnectPlayer player) {

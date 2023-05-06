@@ -25,12 +25,12 @@
 
 package com.minekube.connect.api;
 
-import com.minekube.connect.api.logger.ConnectLogger;
+import minekube.connect.v1alpha1.ConnectServiceClientInterface;
 
 
 public final class ProxyConnectApi extends SimpleConnectApi {
 
-    public ProxyConnectApi(ConnectLogger logger) {
-        super(logger);
+    public ProxyConnectApi(ConnectServiceClientInterface client) {
+        super(client);
     }
 }

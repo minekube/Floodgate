@@ -29,9 +29,9 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.minekube.connect.api.SimpleConnectApi;
-import com.minekube.connect.api.logger.ConnectLogger;
 import com.minekube.connect.config.ConnectConfig;
 import java.nio.file.Path;
+import minekube.connect.v1alpha1.ConnectServiceClientInterface;
 
 public final class ServerCommonModule extends CommonModule {
     public ServerCommonModule(Path dataDirectory) {
@@ -47,7 +47,7 @@ public final class ServerCommonModule extends CommonModule {
 
     @Provides
     @Singleton
-    public SimpleConnectApi api(ConnectLogger logger) {
-        return new SimpleConnectApi(logger);
+    public SimpleConnectApi api(ConnectServiceClientInterface client) {
+        return new SimpleConnectApi(client);
     }
 }

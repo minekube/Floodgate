@@ -3,6 +3,7 @@ import com.google.protobuf.gradle.*
 plugins {
     idea // used to let Intellij recognize protobuf generated sources
     id("com.google.protobuf")
+    kotlin("jvm") version "1.8.21"
 }
 
 dependencies {
