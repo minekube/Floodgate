@@ -19,11 +19,12 @@ dependencies {
     implementation("com.squareup.okhttp3", "okhttp", Versions.okHttpVersion)
     implementation("build.buf", "connect-kotlin-okhttp", Versions.connectKotlinVersion)
     implementation("build.buf", "connect-kotlin-google-java-ext", Versions.connectKotlinVersion)
-    implementation("io.grpc", "grpc-protobuf", Versions.gRPCVersion)
+    implementation("build.buf.gen", "minekube_connect_bufbuild_connect-kotlin", Versions.minekube_connect_bufbuild_connectKotlinVersion)
+    implementation("build.buf.gen", "minekube_connect_protocolbuffers_java", Versions.minekube_connect_protocolbuffers_javaVersion)
+
 }
 
 relocate("org.bstats")
-relocate("build.buf")
 relocate("com.squareup.okhttp3")
 
 

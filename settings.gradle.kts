@@ -38,6 +38,10 @@ dependencyResolutionManagement {
             content { includeGroupByRegex("com\\.github\\..*") }
         }
 
+        maven("https://buf.build/gen/maven") {
+            name = "buf"
+        }
+
     }
 }
 

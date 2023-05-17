@@ -27,8 +27,6 @@ package com.minekube.connect.network.netty;
 
 import com.minekube.connect.api.logger.ConnectLogger;
 import com.minekube.connect.tunnel.TunnelConn.Handler;
-import io.grpc.Status;
-import io.grpc.Status.Code;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -48,11 +46,6 @@ class TunnelHandler implements Handler {
 
     @Override
     public void onError(Throwable t) {
-        // error connecting to tunnel service
-        Status status = Status.fromThrowable(t);
-        if (status.getCode() == Code.CANCELLED) {
-            return;
-        }
         logger.error("Connection error with TunnelService: " +
                         t + (
                         t.getCause() == null ? ""

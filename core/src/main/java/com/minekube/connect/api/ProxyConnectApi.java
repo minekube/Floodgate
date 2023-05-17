@@ -25,7 +25,7 @@
 
 package com.minekube.connect.api;
 
-import minekube.connect.v1alpha1.ConnectServiceClientInterface;
+import build.buf.gen.minekube.connect.v1alpha1.ConnectServiceClientInterface;
 
 
 public final class ProxyConnectApi extends SimpleConnectApi {

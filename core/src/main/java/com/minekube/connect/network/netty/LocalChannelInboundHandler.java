@@ -25,18 +25,18 @@
 
 package com.minekube.connect.network.netty;
 
-import com.google.rpc.Code;
-import com.google.rpc.Status;
+import build.buf.connect.Code;
+import build.buf.gen.google.rpc.Status;
 import com.minekube.connect.api.SimpleConnectApi;
 import com.minekube.connect.api.logger.ConnectLogger;
 import com.minekube.connect.network.netty.LocalSession.Context;
 import com.minekube.connect.tunnel.TunnelConn;
 import com.minekube.connect.tunnel.Tunneler;
-import io.grpc.protobuf.StatusProto;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,7 +71,7 @@ public class LocalChannelInboundHandler extends SimpleChannelInboundHandler<Byte
             }
 
             Status reason = Status.newBuilder()
-                    .setCode(Code.UNKNOWN_VALUE)
+                    .setCode(Code.UNKNOWN.getValue())
                     .setMessage("local connection closed")
                     .build();
 
@@ -93,8 +93,16 @@ public class LocalChannelInboundHandler extends SimpleChannelInboundHandler<Byte
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        Status reason = null;
+        if (cause != null) {
+            reason = Status.newBuilder()
+                    .setCode(Code.UNKNOWN.getValue())
+                    .setMessage(cause.getMessage())
+                    .build();
+        }
+
         // Reject session proposal in case we are still able to and connection was stopped very early.
-        rejectProposal(context, StatusProto.fromThrowable(cause));
+        rejectProposal(context, reason);
         ctx.close();
         super.exceptionCaught(ctx, cause);
     }

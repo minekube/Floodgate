@@ -28,17 +28,15 @@ package com.minekube.connect.module;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import build.buf.connect.ProtocolClientConfig;
-import build.buf.connect.ProtocolClientInterface;
-import build.buf.connect.compression.GzipCompressionPool;
 import build.buf.connect.extensions.GoogleJavaProtobufStrategy;
 import build.buf.connect.impl.ProtocolClient;
 import build.buf.connect.okhttp.ConnectOkHttpClient;
 import build.buf.connect.protocols.NetworkProtocol;
-import com.google.common.collect.Lists;
+import build.buf.gen.minekube.connect.v1alpha1.ConnectServiceClient;
+import build.buf.gen.minekube.connect.v1alpha1.ConnectServiceClientInterface;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.inject.AbstractModule;
-import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -64,12 +62,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
-import minekube.connect.v1alpha1.ConnectServiceClient;
-import minekube.connect.v1alpha1.ConnectServiceClientInterface;
 import okhttp3.OkHttpClient;
 
 @RequiredArgsConstructor
@@ -184,10 +178,7 @@ public class CommonModule extends AbstractModule {
                 new ProtocolClientConfig(
                         connectServiceHost,
                         new GoogleJavaProtobufStrategy(),
-                        NetworkProtocol.CONNECT,
-                        null,
-                        Collections.emptyList(),
-                        Collections.singletonList(GzipCompressionPool.INSTANCE)
+                        NetworkProtocol.CONNECT
                 )
         );
     }

@@ -25,6 +25,7 @@
 
 package com.minekube.connect.api;
 
+import build.buf.gen.minekube.connect.v1alpha1.ConnectServiceClientInterface;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableSet;
@@ -35,7 +36,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import minekube.connect.v1alpha1.ConnectServiceClientInterface;
 
 @RequiredArgsConstructor
 public class SimpleConnectApi implements ConnectApi {
@@ -75,7 +75,7 @@ public class SimpleConnectApi implements ConnectApi {
 
     @Override
     public ConnectServiceClientInterface getConnectServiceClient() {
-        return null;
+        return connectServiceClient;
     }
 
     public ConnectPlayer addPlayer(ConnectPlayer player) {

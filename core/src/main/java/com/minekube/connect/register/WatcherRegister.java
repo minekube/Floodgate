@@ -25,9 +25,9 @@
 
 package com.minekube.connect.register;
 
+import build.buf.connect.Code;
+import build.buf.gen.google.rpc.Status;
 import com.google.inject.Inject;
-import com.google.rpc.Code;
-import com.google.rpc.Status;
 import com.minekube.connect.api.SimpleConnectApi;
 import com.minekube.connect.api.inject.PlatformInjector;
 import com.minekube.connect.api.logger.ConnectLogger;
@@ -157,7 +157,7 @@ public class WatcherRegister {
                 logger.info("Got session proposal with empty tunnel service address " +
                         "from WatchService, rejecting it");
                 proposal.reject(Status.newBuilder()
-                        .setCode(Code.INVALID_ARGUMENT_VALUE)
+                        .setCode(Code.INVALID_ARGUMENT.getValue())
                         .setMessage("tunnel service address must not be empty")
                         .build());
                 return;
@@ -166,7 +166,7 @@ public class WatcherRegister {
                 logger.info("Got session proposal with empty player address " +
                         "from WatchService, rejecting it");
                 proposal.reject(Status.newBuilder()
-                        .setCode(Code.INVALID_ARGUMENT_VALUE)
+                        .setCode(Code.INVALID_ARGUMENT.getValue())
                         .setMessage("player address must not be empty")
                         .build());
                 return;
