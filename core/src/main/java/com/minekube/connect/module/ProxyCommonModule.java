@@ -52,12 +52,4 @@ public final class ProxyCommonModule extends CommonModule {
     public Class<? extends ConnectConfig> configClass() {
         return ProxyConnectConfig.class;
     }
-
-    @Provides
-    @Singleton
-    public ProxyConnectApi proxyApi(
-            ConnectServiceClientInterface client
-    ) {
-        return new ProxyConnectApi(client);
-    }
 }

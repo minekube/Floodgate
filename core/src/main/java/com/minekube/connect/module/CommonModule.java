@@ -27,13 +27,6 @@ package com.minekube.connect.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import build.buf.connect.ProtocolClientConfig;
-import build.buf.connect.extensions.GoogleJavaProtobufStrategy;
-import build.buf.connect.impl.ProtocolClient;
-import build.buf.connect.okhttp.ConnectOkHttpClient;
-import build.buf.connect.protocols.NetworkProtocol;
-import build.buf.gen.minekube.connect.v1alpha1.ConnectServiceClient;
-import build.buf.gen.minekube.connect.v1alpha1.ConnectServiceClientInterface;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.inject.AbstractModule;
@@ -73,12 +66,12 @@ public class CommonModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(ConnectApi.class).to(SimpleConnectApi.class);
+        bind(SimpleConnectApi.class).in(Singleton.class);
+
         bind(PlatformInjector.class).to(CommonPlatformInjector.class);
 
         bind(PacketHandlers.class).to(PacketHandlersImpl.class);
         bind(PacketHandlersImpl.class).asEagerSingleton();
-
-        bind(ConnectServiceClientInterface.class).to(ConnectServiceClient.class);
     }
 
     @Provides
@@ -166,28 +159,44 @@ public class CommonModule extends AbstractModule {
                 .build();
     }
 
-    @Provides
-    @Singleton
-    public ProtocolClient protocolClient(
-            @Named("connectHttpClient") OkHttpClient connectOkHttpClient
-    ) {
-        final String connectServiceHost = System.getenv().getOrDefault(
-                "CONNECT_SERVICE_HOST", "https://connect-api.minekube.com");
-        return new ProtocolClient(
-                new ConnectOkHttpClient(connectOkHttpClient),
-                new ProtocolClientConfig(
-                        connectServiceHost,
-                        new GoogleJavaProtobufStrategy(),
-                        NetworkProtocol.CONNECT
-                )
-        );
-    }
+//    static final String connectApiTarget = "connect-api.minekube.com";
+//
+//    @Provides
+//    @Singleton
+//    public ProtocolClient protocolClient(
+//            @Named("connectHttpClient") OkHttpClient connectOkHttpClient
+//    ) {
+//        final String connectServiceHost = System.getenv().getOrDefault(
+//                "CONNECT_SERVICE_HOST", "https://" + connectApiTarget);
+//        return new ProtocolClient(
+//                new ConnectOkHttpClient(connectOkHttpClient),
+//                new ProtocolClientConfig(
+//                        connectServiceHost,
+//                        new GoogleJavaProtobufStrategy(),
+//                        NetworkProtocol.CONNECT
+//                )
+//        );
+//    }
+//
+//    @Provides
+//    @Singleton
+//    public ConnectServiceClientInterface connectServiceClient(ProtocolClient protocolClient) {
+//        return new ConnectServiceClient(protocolClient);
+//    }
+//
+//    @Provides
+//    @Singleton
+//    public ManagedChannelBuilder<?> managedChannelBuilder(
+//            @Named("endpointName") String endpointName,
+//            @Named("connectToken") String connectToken
+//    ) {
+//        return Grpc.newChannelBuilder(connectApiTarget, InsecureChannelCredentials.create())
+//                .intercept(new HeaderClientInterceptor(ImmutableMap.of(
+//                        WatchClient.ENDPOINT_HEADER, endpointName,
+//                        "Authorization", "Bearer " + connectToken
+//                )));
+//    }
 
-    @Provides
-    @Singleton
-    public ConnectServiceClientInterface connectServiceClient(ProtocolClient protocolClient) {
-        return new ConnectServiceClient(protocolClient);
-    }
 
     @RequiredArgsConstructor
     private static class Token {

@@ -32,6 +32,7 @@ dependencyResolutionManagement {
 
         maven("https://repo.viaversion.com") {
             name = "viaversion-repo"
+            content { includeGroupByRegex("com\\.viaversion\\.*") }
         }
 
         maven("https://jitpack.io") {

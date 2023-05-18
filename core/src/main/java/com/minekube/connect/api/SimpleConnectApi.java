@@ -71,13 +71,6 @@ public class SimpleConnectApi implements ConnectApi {
         return getPendingRemovePlayer(uuid);
     }
 
-    private final ConnectServiceClientInterface connectServiceClient;
-
-    @Override
-    public ConnectServiceClientInterface getConnectServiceClient() {
-        return connectServiceClient;
-    }
-
     public ConnectPlayer addPlayer(ConnectPlayer player) {
         return players.put(player.getUniqueId(), player);
     }
