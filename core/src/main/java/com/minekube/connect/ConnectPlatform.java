@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.name.Named;
+import com.minekube.connect.api.Clients;
 import com.minekube.connect.api.ConnectApi;
 import com.minekube.connect.api.InstanceHolder;
 import com.minekube.connect.api.inject.PlatformInjector;
@@ -101,7 +102,8 @@ public class ConnectPlatform {
                 new ClientsModule()
         );
 
-        InstanceHolder.set(api, this.injector, packetHandlers, KEY);
+        Clients clients = guice.getInstance(Clients.class);
+        InstanceHolder.set(api, this.injector, packetHandlers, clients, KEY);
     }
 
     public boolean enable(Module... postInitializeModules) {

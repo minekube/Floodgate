@@ -35,12 +35,14 @@ public final class InstanceHolder {
 
     @Getter private static PlatformInjector injector;
     @Getter private static PacketHandlers packetHandlers;
+    @Getter private static Clients clients;
     private static UUID storedKey;
 
     public static boolean set(
             ConnectApi connectApi,
             PlatformInjector platformInjector,
             PacketHandlers packetHandlers,
+            Clients clients,
             UUID key) {
 
         if (storedKey != null) {
@@ -51,9 +53,10 @@ public final class InstanceHolder {
             storedKey = key;
         }
 
-        api = connectApi;
-        injector = platformInjector;
+        InstanceHolder.api = connectApi;
+        InstanceHolder.injector = platformInjector;
         InstanceHolder.packetHandlers = packetHandlers;
+        InstanceHolder.clients = clients;
         return true;
     }
 
@@ -61,4 +64,6 @@ public final class InstanceHolder {
     public static <T extends ConnectApi> T castApi(Class<T> cast) {
         return (T) api;
     }
+
+
 }
