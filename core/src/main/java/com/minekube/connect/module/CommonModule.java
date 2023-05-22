@@ -159,43 +159,6 @@ public class CommonModule extends AbstractModule {
                 .build();
     }
 
-//    static final String connectApiTarget = "connect-api.minekube.com";
-//
-//    @Provides
-//    @Singleton
-//    public ProtocolClient protocolClient(
-//            @Named("connectHttpClient") OkHttpClient connectOkHttpClient
-//    ) {
-//        final String connectServiceHost = System.getenv().getOrDefault(
-//                "CONNECT_SERVICE_HOST", "https://" + connectApiTarget);
-//        return new ProtocolClient(
-//                new ConnectOkHttpClient(connectOkHttpClient),
-//                new ProtocolClientConfig(
-//                        connectServiceHost,
-//                        new GoogleJavaProtobufStrategy(),
-//                        NetworkProtocol.CONNECT
-//                )
-//        );
-//    }
-//
-//    @Provides
-//    @Singleton
-//    public ConnectServiceClientInterface connectServiceClient(ProtocolClient protocolClient) {
-//        return new ConnectServiceClient(protocolClient);
-//    }
-//
-//    @Provides
-//    @Singleton
-//    public ManagedChannelBuilder<?> managedChannelBuilder(
-//            @Named("endpointName") String endpointName,
-//            @Named("connectToken") String connectToken
-//    ) {
-//        return Grpc.newChannelBuilder(connectApiTarget, InsecureChannelCredentials.create())
-//                .intercept(new HeaderClientInterceptor(ImmutableMap.of(
-//                        WatchClient.ENDPOINT_HEADER, endpointName,
-//                        "Authorization", "Bearer " + connectToken
-//                )));
-//    }
 
 
     @RequiredArgsConstructor

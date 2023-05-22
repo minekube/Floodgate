@@ -28,7 +28,6 @@ package com.minekube.connect.api;
 import com.minekube.connect.api.player.ConnectPlayer;
 import java.util.Collection;
 import java.util.UUID;
-import build.buf.gen.minekube.connect.v1alpha1.ConnectServiceClientInterface;
 
 public interface ConnectApi {
     /**

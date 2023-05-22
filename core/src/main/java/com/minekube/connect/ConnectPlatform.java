@@ -38,6 +38,7 @@ import com.minekube.connect.config.ConfigHolder;
 import com.minekube.connect.config.ConfigLoader;
 import com.minekube.connect.config.ConnectConfig;
 import com.minekube.connect.inject.CommonPlatformInjector;
+import com.minekube.connect.module.ClientsModule;
 import com.minekube.connect.module.ConfigLoadedModule;
 import com.minekube.connect.module.PostInitializeModule;
 import com.minekube.connect.register.WatcherRegister;
@@ -95,7 +96,10 @@ public class ConnectPlatform {
         }
 
         configHolder.set(config);
-        guice = guice.createChildInjector(new ConfigLoadedModule(config));
+        guice = guice.createChildInjector(
+                new ConfigLoadedModule(config),
+                new ClientsModule()
+        );
 
         InstanceHolder.set(api, this.injector, packetHandlers, KEY);
     }

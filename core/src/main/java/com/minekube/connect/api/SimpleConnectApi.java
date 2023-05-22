@@ -25,7 +25,6 @@
 
 package com.minekube.connect.api;
 
-import build.buf.gen.minekube.connect.v1alpha1.ConnectServiceClientInterface;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableSet;

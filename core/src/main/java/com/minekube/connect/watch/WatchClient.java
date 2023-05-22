@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WatchClient {
-    private static final String ENDPOINT_HEADER = "Connect-Endpoint";
+    public static final String ENDPOINT_HEADER = "Connect-Endpoint";
     private static final String ENDPOINT_OFFLINE_MODE_HEADER = ENDPOINT_HEADER + "-Offline-Mode";
     private static final String ENDPOINT_PARENTS_HEADER = ENDPOINT_HEADER + "-Parents";
     private static final String WATCH_URL = System.getenv().getOrDefault(
