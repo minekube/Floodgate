@@ -79,8 +79,9 @@ public final class MainCommand implements ConnectCommand {
 
     @RequiredArgsConstructor
     enum SubCommand {
-        FIREWALL("Check if your outgoing firewall allows Floodgate to work properly",
-                Permission.COMMAND_MAIN_FIREWALL, FirewallCheckSubcommand::executeFirewall);
+        VERSION("Shows the current version of Connect plugin",
+                Permission.COMMAND_MAIN_VERSION,
+                userAudienceCommandContext -> userAudienceCommandContext.getSender().sendMessage("This is a demo command"));
 
         static final SubCommand[] VALUES = values();
 

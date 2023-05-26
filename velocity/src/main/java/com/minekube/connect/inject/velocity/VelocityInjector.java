@@ -54,9 +54,9 @@ public final class VelocityInjector extends CommonPlatformInjector {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public boolean inject() {
+    public void inject() {
         if (isInjected()) {
-            return true;
+            return;
         }
 
         Object connectionManager = getValue(server, "cm");
@@ -104,7 +104,7 @@ public final class VelocityInjector extends CommonPlatformInjector {
 
         // End of logic from GeyserMC
 
-        return injected = true;
+        injected = true;
     }
 
     @RequiredArgsConstructor

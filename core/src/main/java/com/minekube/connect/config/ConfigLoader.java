@@ -28,6 +28,7 @@ package com.minekube.connect.config;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.minekube.connect.api.logger.ConnectLogger;
+import com.minekube.connect.util.Constants;
 import com.minekube.connect.util.Utils;
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +53,7 @@ import org.geysermc.configutils.updater.change.Changes;
 @Getter
 @RequiredArgsConstructor
 public final class ConfigLoader {
-    private final Path dataFolder;
+    private final Path dataDirectory;
     private final Class<? extends ConnectConfig> configClass;
     private final EndpointNameGenerator endpointNameGenerator;
 
@@ -80,7 +81,7 @@ public final class ConfigLoader {
 
         ConfigUtilities utilities =
                 ConfigUtilities.builder()
-                        .fileCodec(PathFileCodec.of(dataFolder))
+                        .fileCodec(PathFileCodec.of(dataDirectory))
                         .configFile("config.yml")
                         .templateReader(ResourceTemplateReader.of(getClass()))
                         .template(templateFile)
@@ -95,7 +96,7 @@ public final class ConfigLoader {
 
         try {
             // temporary placeholder fix
-            File config = new File(dataFolder.toFile(), "config.yml");
+            File config = new File(dataDirectory.toFile(), "config.yml");
             if (config.exists()) {
                 fixPlaceholderIssue(config.toPath());
             } else {
@@ -114,8 +115,6 @@ public final class ConfigLoader {
     }
 
     public static class EndpointNameGenerator {
-        private static final String URL = "https://randomname.minekube.net";
-
         final private OkHttpClient client;
 
         @Inject
@@ -127,7 +126,7 @@ public final class ConfigLoader {
 
         String get() {
             Request req = new Builder()
-                    .url(URL)
+                    .url(Constants.CONNECT_RANDOM_NAME_URL)
                     .build();
 
             String name;

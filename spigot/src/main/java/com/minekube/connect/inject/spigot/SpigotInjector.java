@@ -25,6 +25,9 @@
 
 package com.minekube.connect.inject.spigot;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import com.minekube.connect.api.logger.ConnectLogger;
 import com.minekube.connect.inject.CommonPlatformInjector;
 import com.minekube.connect.network.netty.LocalServerChannelWrapper;
@@ -52,17 +55,18 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-@RequiredArgsConstructor
+@Singleton
 public final class SpigotInjector extends CommonPlatformInjector {
-    private final ConnectLogger logger;
+    @Inject private ConnectLogger logger;
     /**
      * Used to determine if ViaVersion is set up to a state where Connect players will fail at
      * joining if injection is enabled
      */
-    private final boolean isViaVersion;
+    @Inject
+    @Named("isViaVersion")
+    private boolean isViaVersion;
     /**
      * Used to uninject ourselves on shutdown.
      */
@@ -90,9 +94,9 @@ public final class SpigotInjector extends CommonPlatformInjector {
 
     @Override
     @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
-    public boolean inject() throws Exception {
+    public void inject() throws Exception {
         if (isInjected()) {
-            return true;
+            return;
         }
 
 //        disableEnforceSecureProfile();
@@ -137,11 +141,10 @@ public final class SpigotInjector extends CommonPlatformInjector {
                     field.set(serverConnection, newList);
 
                     injected = true;
-                    return true;
+                    return;
                 }
             }
         }
-        return false;
     }
 
     public void injectClient(ChannelFuture future) {

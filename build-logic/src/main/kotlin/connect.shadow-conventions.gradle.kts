@@ -15,6 +15,9 @@ tasks {
         archiveVersion.set("")
         archiveClassifier.set("")
 
+        exclude("**/*.proto")
+        includeEmptyDirs = false
+
         val sJar: ShadowJar = this
 
         doFirst {

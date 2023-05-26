@@ -25,6 +25,10 @@
 
 package com.minekube.connect.network.netty;
 
+import build.buf.connect.Code;
+import build.buf.gen.google.rpc.Status;
+import build.buf.gen.minekube.connect.v1alpha1.Player;
+import build.buf.gen.minekube.connect.v1alpha1.Session;
 import com.google.common.base.Preconditions;
 import com.minekube.connect.api.SimpleConnectApi;
 import com.minekube.connect.api.logger.ConnectLogger;
@@ -37,7 +41,6 @@ import com.minekube.connect.tunnel.TunnelConn;
 import com.minekube.connect.tunnel.Tunneler;
 import com.minekube.connect.watch.SessionProposal;
 import com.minekube.connect.watch.SessionProposal.State;
-import io.grpc.protobuf.StatusProto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
@@ -59,8 +62,6 @@ import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import minekube.connect.v1alpha1.WatchServiceOuterClass.Player;
-import minekube.connect.v1alpha1.WatchServiceOuterClass.Session;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -185,8 +186,15 @@ public final class LocalSession {
 
     private void exceptionCaught(Throwable cause) {
         cause.printStackTrace();
+        Status reason = null;
+        if (cause != null) {
+            reason = Status.newBuilder()
+                    .setCode(Code.UNKNOWN.getValue())
+                    .setMessage(cause.getMessage())
+                    .build();
+        }
         // Reject session proposal in case we are still able to.
-        sessionProposal.reject(StatusProto.fromThrowable(cause));
+        sessionProposal.reject(reason);
     }
 
     /**

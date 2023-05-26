@@ -25,15 +25,15 @@
 
 package com.minekube.connect.watch;
 
+import build.buf.gen.minekube.connect.v1alpha1.SessionRejection;
+import build.buf.gen.minekube.connect.v1alpha1.SessionRejection.Builder;
+import build.buf.gen.minekube.connect.v1alpha1.WatchRequest;
+import build.buf.gen.minekube.connect.v1alpha1.WatchResponse;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.minekube.connect.config.ConnectConfig;
 import java.io.IOException;
-import minekube.connect.v1alpha1.WatchServiceOuterClass.SessionRejection;
-import minekube.connect.v1alpha1.WatchServiceOuterClass.SessionRejection.Builder;
-import minekube.connect.v1alpha1.WatchServiceOuterClass.WatchRequest;
-import minekube.connect.v1alpha1.WatchServiceOuterClass.WatchResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WatchClient {
-    private static final String ENDPOINT_HEADER = "Connect-Endpoint";
+    public static final String ENDPOINT_HEADER = "Connect-Endpoint";
     private static final String ENDPOINT_OFFLINE_MODE_HEADER = ENDPOINT_HEADER + "-Offline-Mode";
     private static final String ENDPOINT_PARENTS_HEADER = ENDPOINT_HEADER + "-Parents";
     private static final String WATCH_URL = System.getenv().getOrDefault(

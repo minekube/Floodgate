@@ -25,19 +25,19 @@
 
 package com.minekube.connect.watch;
 
+import build.buf.gen.minekube.connect.v1alpha1.Session;
+import build.buf.gen.google.rpc.Status;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import minekube.connect.v1alpha1.WatchServiceOuterClass.Session;
 
 @RequiredArgsConstructor
 public class SessionProposal {
 
     @Getter
     private final Session session;
-    private final Consumer<com.google.rpc.Status> reject;
+    private final Consumer<Status> reject;
 
     private final AtomicReference<State> state = new AtomicReference<>(State.ACCEPTED);
 
@@ -46,7 +46,7 @@ public class SessionProposal {
         REJECTED
     }
 
-    public void reject(com.google.rpc.Status reason) {
+    public void reject(Status reason) {
         if (state.compareAndSet(State.ACCEPTED, State.REJECTED)) {
             reject.accept(reason);
         }

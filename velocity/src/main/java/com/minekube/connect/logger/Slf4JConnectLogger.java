@@ -27,17 +27,27 @@ package com.minekube.connect.logger;
 
 import static com.minekube.connect.util.MessageFormatter.format;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.minekube.connect.api.logger.ConnectLogger;
+import com.minekube.connect.config.ConnectConfig;
 import com.minekube.connect.util.LanguageManager;
-import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 
-@RequiredArgsConstructor
+@Singleton
 public final class Slf4JConnectLogger implements ConnectLogger {
-    private final Logger logger;
-    private final LanguageManager languageManager;
+    @Inject private Logger logger;
+    private LanguageManager languageManager;
+
+    @Inject
+    private void init(LanguageManager languageManager, ConnectConfig config) {
+        this.languageManager = languageManager;
+        if (config.isDebug() && !logger.isDebugEnabled()) {
+            Configurator.setLevel(logger.getName(), Level.DEBUG);
+        }
+    }
 
     @Override
     public void error(String message, Object... args) {
@@ -72,20 +82,6 @@ public final class Slf4JConnectLogger implements ConnectLogger {
     @Override
     public void trace(String message, Object... args) {
         logger.trace(message, args);
-    }
-
-    @Override
-    public void enableDebug() {
-        if (!logger.isDebugEnabled()) {
-            Configurator.setLevel(logger.getName(), Level.DEBUG);
-        }
-    }
-
-    @Override
-    public void disableDebug() {
-        if (logger.isDebugEnabled()) {
-            Configurator.setLevel(logger.getName(), Level.INFO);
-        }
     }
 
     @Override

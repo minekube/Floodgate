@@ -29,7 +29,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.minekube.connect.api.logger.ConnectLogger;
 import com.minekube.connect.api.player.ConnectPlayer;
 import java.util.Collection;
 import java.util.Map;
@@ -44,8 +43,6 @@ public class SimpleConnectApi implements ConnectApi {
             CacheBuilder.newBuilder()
                     .expireAfterWrite(20, TimeUnit.SECONDS)
                     .build();
-
-    private final ConnectLogger logger;
 
     @Override
     public Collection<ConnectPlayer> getPlayers() {

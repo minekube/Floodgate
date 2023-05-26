@@ -30,11 +30,11 @@ import com.minekube.connect.api.inject.PlatformInjector;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import java.net.SocketAddress;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import lombok.AccessLevel;
+import java.util.WeakHashMap;
 import lombok.Getter;
 
 /**
@@ -65,8 +65,7 @@ public abstract class CommonPlatformInjector implements PlatformInjector {
         }
     }
 
-    @Getter(AccessLevel.PROTECTED)
-    private final Set<Channel> injectedClients = new HashSet<>();
+    private final Set<Channel> injectedClients =  Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     private final Map<Class<?>, InjectorAddon> addons = new HashMap<>();
 
@@ -76,6 +75,10 @@ public abstract class CommonPlatformInjector implements PlatformInjector {
 
     public boolean removeInjectedClient(Channel channel) {
         return injectedClients.remove(channel);
+    }
+
+    public Set<Channel> injectedClients() {
+        return injectedClients;
     }
 
     @Override

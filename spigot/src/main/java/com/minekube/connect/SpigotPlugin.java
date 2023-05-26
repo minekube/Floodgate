@@ -42,7 +42,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SpigotPlugin extends JavaPlugin {
-    private SpigotPlatform platform;
+    private ConnectPlatform platform;
     private Injector injector;
 
     @Override
@@ -53,7 +53,7 @@ public final class SpigotPlugin extends JavaPlugin {
                 new SpigotPlatformModule(this)
         );
 
-        platform = injector.getInstance(SpigotPlatform.class);
+        platform = injector.getInstance(ConnectPlatform.class);
 
         long endCtm = System.currentTimeMillis();
         injector.getInstance(ConnectLogger.class)
@@ -65,14 +65,17 @@ public final class SpigotPlugin extends JavaPlugin {
         boolean usePaperListener = ReflectionUtils.getClassSilently(
                 "com.destroystokyo.paper.event.profile.PreFillProfileEvent") != null;
 
-        platform.enable(
-                new SpigotCommandModule(this),
-                new SpigotAddonModule(),
-                (usePaperListener ? new PaperListenerModule() : new SpigotListenerModule()),
-                new WatcherModule()
-        );
-
-        //todo add proper support for disabling things on shutdown and enabling this on enable
+        try {
+            platform.enable(
+                    new SpigotCommandModule(this),
+                    new SpigotAddonModule(),
+                    (usePaperListener ? new PaperListenerModule() : new SpigotListenerModule()),
+                    new WatcherModule()
+            );
+        } catch (Exception exception) {
+            Bukkit.getPluginManager().disablePlugin(this);
+            throw exception;
+        }
 
         // add ProtocolSupport support (hack)
         if (isProtocolSupport()) {

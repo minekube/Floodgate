@@ -30,7 +30,6 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.minekube.connect.api.ProxyConnectApi;
 import com.minekube.connect.api.SimpleConnectApi;
-import com.minekube.connect.api.logger.ConnectLogger;
 import com.minekube.connect.config.ConnectConfig;
 import com.minekube.connect.config.ProxyConnectConfig;
 import java.nio.file.Path;
@@ -44,20 +43,19 @@ public final class ProxyCommonModule extends CommonModule {
     protected void configure() {
         super.configure();
         bind(SimpleConnectApi.class).to(ProxyConnectApi.class);
+        bind(ProxyConnectApi.class).in(Singleton.class);
+    }
+
+    @Provides
+    @Singleton
+    public ProxyConnectConfig proxyConnectConfig(ConnectConfig config) {
+        return (ProxyConnectConfig) config;
     }
 
     @Provides
     @Singleton
     @Named("configClass")
-    public Class<? extends ConnectConfig> configClass() {
+    public Class<? extends ConnectConfig> connectConfigClass() {
         return ProxyConnectConfig.class;
-    }
-
-    @Provides
-    @Singleton
-    public ProxyConnectApi proxyApi(
-            ConnectLogger logger
-    ) {
-        return new ProxyConnectApi(logger);
     }
 }

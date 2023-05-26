@@ -47,7 +47,6 @@ import com.minekube.connect.platform.util.PlatformUtils;
 import com.minekube.connect.player.ConnectCommandPreprocessor;
 import com.minekube.connect.player.UserAudience;
 import com.minekube.connect.skin.SkinApplier;
-import com.minekube.connect.util.LanguageManager;
 import com.minekube.connect.util.VelocityCommandUtil;
 import com.minekube.connect.util.VelocityPlatformUtils;
 import com.minekube.connect.util.VelocitySkinApplier;
@@ -55,7 +54,6 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.EventManager;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
 
 @RequiredArgsConstructor
 public final class VelocityPlatformModule extends AbstractModule {
@@ -65,6 +63,8 @@ public final class VelocityPlatformModule extends AbstractModule {
     protected void configure() {
         bind(CommandUtil.class).to(VelocityCommandUtil.class);
         bind(PlatformUtils.class).to(VelocityPlatformUtils.class);
+        bind(ConnectLogger.class).to(Slf4JConnectLogger.class);
+        bind(SkinApplier.class).to(VelocitySkinApplier.class);
     }
 
     @Provides
@@ -82,12 +82,6 @@ public final class VelocityPlatformModule extends AbstractModule {
 
         commandManager.registerCommandPreProcessor(new ConnectCommandPreprocessor<>(commandUtil));
         return commandManager;
-    }
-
-    @Provides
-    @Singleton
-    public ConnectLogger logger(Logger logger, LanguageManager languageManager) {
-        return new Slf4JConnectLogger(logger, languageManager);
     }
 
     /*

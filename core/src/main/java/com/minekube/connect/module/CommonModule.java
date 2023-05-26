@@ -66,10 +66,20 @@ public class CommonModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(ConnectApi.class).to(SimpleConnectApi.class);
+        bind(SimpleConnectApi.class).in(Singleton.class);
+
         bind(PlatformInjector.class).to(CommonPlatformInjector.class);
 
         bind(PacketHandlers.class).to(PacketHandlersImpl.class);
         bind(PacketHandlersImpl.class).asEagerSingleton();
+
+        install(new AutoBindModule());
+    }
+
+    @Provides
+    @Singleton
+    public ConnectConfig connectConfig(ConfigLoader configLoader) {
+        return configLoader.load();
     }
 
     @Provides
@@ -113,15 +123,9 @@ public class CommonModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named("connectHttpClient")
-    public OkHttpClient connectOkHttpClient(
-            @Named("defaultHttpClient") OkHttpClient defaultOkHttpClient,
-            PlatformUtils platformUtils,
-            @Named("platformName") String implementationName,
-            ConnectApi api
-    ) throws IOException {
+    @Named("connectToken")
+    public String connectToken() throws IOException {
         Path tokenFile = dataDirectory.resolve("token.json");
-
         Optional<String> token = Token.load(tokenFile);
         if (!token.isPresent()) {
             // Generate and save new token
@@ -129,12 +133,23 @@ public class CommonModule extends AbstractModule {
             Token.save(tokenFile, t);
             token = Optional.of(t);
         }
-        final String apiToken = token.get();
+        return token.get();
+    }
 
+    @Provides
+    @Singleton
+    @Named("connectHttpClient")
+    public OkHttpClient connectOkHttpClient(
+            @Named("defaultHttpClient") OkHttpClient defaultOkHttpClient,
+            PlatformUtils platformUtils,
+            @Named("platformName") String implementationName,
+            ConnectApi api,
+            @Named("connectToken") String connectToken
+    ) {
         return defaultOkHttpClient.newBuilder()
                 .addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
                         // Add authorization token to every request
-                        .addHeader("Authorization", "Bearer " + apiToken)
+                        .addHeader("Authorization", "Bearer " + connectToken)
                         // Add Connect Metadata to every request
                         .addHeader("Connect-TotalPlayers",
                                 String.valueOf(platformUtils.getPlayerCount()))
@@ -151,6 +166,8 @@ public class CommonModule extends AbstractModule {
                         .build()))
                 .build();
     }
+
+
 
     @RequiredArgsConstructor
     private static class Token {

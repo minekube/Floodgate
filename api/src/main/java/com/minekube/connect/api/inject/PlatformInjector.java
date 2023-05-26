@@ -43,10 +43,9 @@ public interface PlatformInjector {
     /**
      * Injects the server connection.
      *
-     * @return true if the connection has successfully been injected
      * @throws Exception if something went wrong while injecting the server connection
      */
-    boolean inject() throws Exception;
+    void inject() throws Exception;
 
     /**
      * If the server connection is currently injected.

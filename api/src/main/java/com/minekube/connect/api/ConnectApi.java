@@ -62,4 +62,13 @@ public interface ConnectApi {
      * @return ConnectPlayer if the given uuid is a player tunneled by Connect
      */
     ConnectPlayer getPlayer(UUID uuid);
+
+    /**
+     * Get authenticated Connect API Services clients ready to use.
+     *
+     * @return Clients
+     */
+    default Clients getClients() {
+        return InstanceHolder.getClients();
+    }
 }

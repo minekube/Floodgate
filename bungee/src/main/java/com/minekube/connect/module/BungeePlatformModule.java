@@ -32,6 +32,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 import com.minekube.connect.BungeePlugin;
 import com.minekube.connect.api.ConnectApi;
 import com.minekube.connect.api.logger.ConnectLogger;
@@ -49,6 +50,7 @@ import com.minekube.connect.skin.SkinApplier;
 import com.minekube.connect.util.BungeeCommandUtil;
 import com.minekube.connect.util.BungeePlatformUtils;
 import com.minekube.connect.util.LanguageManager;
+import java.util.logging.Logger;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -62,19 +64,10 @@ public final class BungeePlatformModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(PlatformUtils.class).to(BungeePlatformUtils.class);
+        bind(Logger.class).annotatedWith(Names.named("logger")).toInstance(plugin.getLogger());
+        bind(ConnectLogger.class).to(JavaUtilConnectLogger.class);
         bind(ProxyServer.class).toInstance(plugin.getProxy());
-    }
-
-    @Provides
-    @Singleton
-    public Plugin bungeePlugin() {
-        return plugin;
-    }
-
-    @Provides
-    @Singleton
-    public ConnectLogger logger(LanguageManager languageManager) {
-        return new JavaUtilConnectLogger(plugin.getLogger(), languageManager);
+        bind(Plugin.class).toInstance(plugin);
     }
 
     /*
