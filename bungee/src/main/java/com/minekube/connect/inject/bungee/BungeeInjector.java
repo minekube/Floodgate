@@ -66,9 +66,8 @@ public final class BungeeInjector extends CommonPlatformInjector implements List
 
 
     @Override
-    public boolean inject() {
-        try {
-            // Can everyone just switch to Velocity please :)
+    public void inject() throws Exception {
+        // Can everyone just switch to Velocity please :)
 
 //            Field framePrepender = ReflectionUtils.getField(PipelineUtils.class, "framePrepender");
 //
@@ -80,13 +79,8 @@ public final class BungeeInjector extends CommonPlatformInjector implements List
 //            );
 //
 //            BungeeReflectionUtils.setFieldValue(null, framePrepender, customPrepender);
-            initializeLocalChannel0();
-            injected = true;
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        initializeLocalChannel0();
+        injected = true;
     }
 
     public void initializeLocalChannel() {

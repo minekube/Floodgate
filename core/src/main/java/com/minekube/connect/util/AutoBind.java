@@ -23,25 +23,16 @@
  * @link https://github.com/GeyserMC/Floodgate
  */
 
-object Versions {
-    const val spigotVersion = "1.13-R0.1-SNAPSHOT"
-    const val configUtilsVersion = "1.0-SNAPSHOT"
-    const val guiceVersion = "5.1.0"
-    const val nettyVersion = "4.1.49.Final"
-    const val snakeyamlVersion = "1.28"
-    const val cloudVersion = "1.5.0"
-    const val adventureApiVersion = "4.10.0"
-    const val adventurePlatformVersion = "4.0.0"
-    const val viaVersionVersion = "4.0.0"
-    const val gRPCVersion = "1.55.1"
-    const val connectKotlinVersion = "0.1.7"
-    const val minekube_connect_bufbuild_connectKotlinVersion = "${connectKotlinVersion}.2.20230517110945.04c17e7d2fd9"
-    const val minekube_connect_grpc_javaVersion = "1.55.1.1.20230517110945.04c17e7d2fd9"
-    const val minekube_connect_protocolbuffers_javaVersion = "23.0.0.1.20230517110945.04c17e7d2fd9"
-    const val okHttpVersion = "4.9.3"
-    const val protocVersion = "3.19.4"
-    const val bstatsVersion = "3.0.2"
-    const val gsonVersion = "2.8.6"
+package com.minekube.connect.util;
 
-    const val checkerQual = "3.19.0"
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+/**
+ * Automatically binds an instance of itself as an eager singleton during the post-initialise stage
+ * of the FloodgatePlatform. Add the annotation to a class, and it should automatically create an
+ * instance and inject it for you.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AutoBind {
 }

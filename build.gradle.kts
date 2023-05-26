@@ -1,12 +1,13 @@
 plugins {
     `java-library`
+
     id("connect.build-logic")
     id("io.freefair.lombok") version "6.3.0" apply false
 }
 
 allprojects {
     group = "com.minekube.connect"
-    version = "0.4.0"
+    version = property("version")!!
     description =
         "Connects the server/proxy to the global Connect network to reach more players while also supporting online mode server, bungee or velocity mode. Visit https://connect.minekube.com"
 }

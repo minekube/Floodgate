@@ -23,33 +23,16 @@
  * @link https://github.com/GeyserMC/Floodgate
  */
 
-package com.minekube.connect;
+package com.minekube.connect.ap;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.minekube.connect.api.ConnectApi;
-import com.minekube.connect.api.inject.PlatformInjector;
-import com.minekube.connect.api.logger.ConnectLogger;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
 
-public final class SpigotPlatform extends ConnectPlatform {
-    @Inject private JavaPlugin plugin;
-
-    @Inject
-    public SpigotPlatform(ConnectApi api, PlatformInjector platformInjector,
-                          ConnectLogger logger, Injector injector) {
-        super(api, platformInjector, logger, injector);
-    }
-
-    @Override
-    public boolean enable(Module... postInitializeModules) {
-        boolean success = super.enable(postInitializeModules);
-        if (!success) {
-            Bukkit.getPluginManager().disablePlugin(plugin);
-            return false;
-        }
-        return true;
+@SupportedAnnotationTypes("*")
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
+public class AutoBindProcessor extends ClassProcessor {
+    public AutoBindProcessor() {
+        super("com.minekube.connect.util.AutoBind");
     }
 }

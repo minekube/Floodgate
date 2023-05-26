@@ -37,6 +37,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
@@ -46,9 +47,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Utils {
     private static final Pattern NON_UNIQUE_PREFIX = Pattern.compile("^[a-zA-Z0-9_]{0,16}$");
@@ -254,5 +257,44 @@ public class Utils {
                 .substring(2)
                 .replaceAll("(\\d[HMS])(?!$)", "$1 ")
                 .toLowerCase();
+    }
+
+
+    /**
+     * Returns a set of all the classes that are annotated by a given annotation.
+     * Keep in mind that these are from a set of generated annotations generated
+     * at compile time by the annotation processor, meaning that arbitrary annotations
+     * cannot be passed into this method and expected to get a set of classes back.
+     *
+     * @param annotationClass the annotation class
+     * @return a set of all the classes annotated by the given annotation
+     */
+    public static Set<Class<?>> getGeneratedClassesForAnnotation(Class<? extends Annotation> annotationClass) {
+        return getGeneratedClassesForAnnotation(annotationClass.getName());
+    }
+
+    /**
+     * Returns a set of all the classes that are annotated by a given annotation.
+     * Keep in mind that these are from a set of generated annotations generated
+     * at compile time by the annotation processor, meaning that arbitrary annotations
+     * cannot be passed into this method and expected to have a set of classes
+     * returned back.
+     *
+     * @param input the fully qualified name of the annotation
+     * @return a set of all the classes annotated by the given annotation
+     */
+    public static Set<Class<?>> getGeneratedClassesForAnnotation(String input) {
+        try (InputStream annotatedClass = Utils.class.getClassLoader().getResourceAsStream(input);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(annotatedClass))) {
+            return reader.lines().map(className -> {
+                try {
+                    return Class.forName(className);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException("Failed to find class for annotation " + input, ex);
+                }
+            }).collect(Collectors.toSet());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

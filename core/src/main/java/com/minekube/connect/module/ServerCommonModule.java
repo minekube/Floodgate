@@ -28,12 +28,19 @@ package com.minekube.connect.module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.minekube.connect.api.SimpleConnectApi;
 import com.minekube.connect.config.ConnectConfig;
 import java.nio.file.Path;
 
 public final class ServerCommonModule extends CommonModule {
     public ServerCommonModule(Path dataDirectory) {
         super(dataDirectory);
+    }
+
+    @Override
+    protected void configure() {
+        super.configure();
+        bind(SimpleConnectApi.class).in(Singleton.class);
     }
 
     @Provides

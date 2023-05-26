@@ -26,19 +26,19 @@
 package com.minekube.connect.util;
 
 public final class Constants {
-    public static final String VERSION = "${connectVersion}";
-    public static final int BUILD_NUMBER = Integer.parseInt("${buildNumber}");
-    public static final String GIT_BRANCH = "${branch}";
+    public static final String VERSION = "@connectVersion@";
+    public static final int BUILD_NUMBER = Integer.parseInt("@buildNumber@");
+    public static final String GIT_BRANCH = "@branch@";
     public static final int METRICS_ID = 14794;
 
-    public static final char COLOR_CHAR = '§';
+    public static final char COLOR_CHAR = '\u00A7'; // §
 
     public static final boolean DEBUG_MODE = false;
     public static final boolean PRINT_ALL_PACKETS = false;
 
 
-    private static final String API_BASE_URL = "s://api.geysermc.org";
-    public static final String HEALTH_URL = "http" + API_BASE_URL + "/health";
+    public static final String CONNECT_API_TARGET = "connect-api.minekube.com";
+    public static final String CONNECT_RANDOM_NAME_URL = "https://randomname.minekube.net";
 
     public static final int HANDSHAKE_PACKET_ID = 0;
     public static final int LOGIN_SUCCESS_PACKET_ID = 2;

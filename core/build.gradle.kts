@@ -1,13 +1,13 @@
-import net.kyori.blossom.BlossomExtension
-
 plugins {
-    id("net.kyori.blossom")
+    id("connect.generate-templates")
 }
 
 dependencies {
     api(projects.api)
-
     api("org.geysermc.configutils", "configutils", Versions.configUtilsVersion)
+
+    compileOnly(projects.ap)
+    annotationProcessor(projects.ap)
 
     api("com.google.inject", "guice", Versions.guiceVersion)
     api("cloud.commandframework", "cloud-core", Versions.cloudVersion)
@@ -37,9 +37,11 @@ provided("io.netty", "netty-transport", Versions.nettyVersion)
 provided("io.netty", "netty-codec", Versions.nettyVersion)
 provided("io.netty", "netty-transport-native-unix-common", Versions.nettyVersion)
 
-configure<BlossomExtension> {
-    val constantsFile = "src/main/java/com/minekube/connect/util/Constants.java"
-    replaceToken("\${connectVersion}", fullVersion(), constantsFile)
-    replaceToken("\${branch}", branchName(), constantsFile)
-    replaceToken("\${buildNumber}", buildNumber(), constantsFile)
+
+tasks {
+    templateSources {
+        replaceToken("connectVersion", fullVersion())
+        replaceToken("branch", branchName())
+        replaceToken("buildNumber", buildNumber())
+    }
 }

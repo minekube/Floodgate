@@ -72,6 +72,14 @@ public class CommonModule extends AbstractModule {
 
         bind(PacketHandlers.class).to(PacketHandlersImpl.class);
         bind(PacketHandlersImpl.class).asEagerSingleton();
+
+        install(new AutoBindModule());
+    }
+
+    @Provides
+    @Singleton
+    public ConnectConfig connectConfig(ConfigLoader configLoader) {
+        return configLoader.load();
     }
 
     @Provides

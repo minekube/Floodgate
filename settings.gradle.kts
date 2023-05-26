@@ -1,9 +1,12 @@
+@file:Suppress("UnstableApiUsage")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        // Geyser, Cumulus etc. TODO remove
+        mavenLocal()
+
+        // Geyser, Cumulus etc.
         maven("https://repo.opencollab.dev/maven-releases") {
             mavenContent { releasesOnly() }
         }
@@ -12,10 +15,12 @@ dependencyResolutionManagement {
         }
 
         // Paper, Velocity
-        maven("https://papermc.io/repo/repository/maven-public")
-        // Spigot
-        maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots") {
-            mavenContent { snapshotsOnly() }
+        maven("https://repo.papermc.io/repository/maven-public") {
+            content {
+                includeGroupByRegex(
+                    "(io\\.papermc\\..*|com\\.destroystokyo\\..*|com\\.velocitypowered)"
+                )
+            }
         }
 
         // BungeeCord
@@ -50,14 +55,9 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
     }
-    repositories {
-        maven("https://plugins.gradle.org/m2/")
-    }
     plugins {
-        id("net.kyori.blossom") version "1.2.0"
         id("net.kyori.indra")
         id("net.kyori.indra.git")
-        id("com.google.protobuf") version "0.8.18"
     }
     includeBuild("build-logic")
 }
@@ -65,6 +65,7 @@ pluginManagement {
 rootProject.name = "connect-parent"
 
 include(":api")
+include(":ap")
 include(":core")
 include(":bungee")
 include(":spigot")

@@ -20,6 +20,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.minekube.connect.api.Clients;
 import com.minekube.connect.config.ConfigHolder;
+import com.minekube.connect.util.Constants;
 import com.minekube.connect.util.HeaderClientInterceptor;
 import com.minekube.connect.watch.WatchClient;
 import io.grpc.Channel;
@@ -31,8 +32,6 @@ import okhttp3.OkHttpClient;
 
 @RequiredArgsConstructor
 public class ClientsModule extends AbstractModule {
-
-    private static final String CONNECT_API_TARGET = "connect-api.minekube.com";
 
     @Override
     protected void configure() {
@@ -46,7 +45,7 @@ public class ClientsModule extends AbstractModule {
             @Named("connectHttpClient") OkHttpClient connectOkHttpClient
     ) {
         final String connectServiceHost = System.getenv().getOrDefault(
-                "CONNECT_SERVICE_HOST", "https://" + CONNECT_API_TARGET);
+                "CONNECT_SERVICE_HOST", "https://" + Constants.CONNECT_API_TARGET);
         return new ProtocolClient(
                 new ConnectOkHttpClient(connectOkHttpClient),
                 new ProtocolClientConfig(
@@ -105,7 +104,7 @@ public class ClientsModule extends AbstractModule {
     ) {
 //        return ManagedChannelBuilder.forTarget(CONNECT_API_TARGET)
 //        return Grpc.newChannelBuilder(CONNECT_API_TARGET, InsecureChannelCredentials.create())
-        return OkHttpChannelBuilder.forTarget(CONNECT_API_TARGET, InsecureChannelCredentials.create())
+        return OkHttpChannelBuilder.forTarget( Constants.CONNECT_API_TARGET, InsecureChannelCredentials.create())
                 .intercept(new HeaderClientInterceptor(ImmutableMap.of(
                         WatchClient.ENDPOINT_HEADER, endpointName,
                         "Authorization", "Bearer " + connectToken

@@ -28,15 +28,12 @@ package com.minekube.connect;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.name.Named;
 import com.minekube.connect.api.Clients;
 import com.minekube.connect.api.ConnectApi;
 import com.minekube.connect.api.InstanceHolder;
 import com.minekube.connect.api.inject.PlatformInjector;
 import com.minekube.connect.api.logger.ConnectLogger;
 import com.minekube.connect.api.packet.PacketHandlers;
-import com.minekube.connect.config.ConfigHolder;
-import com.minekube.connect.config.ConfigLoader;
 import com.minekube.connect.config.ConnectConfig;
 import com.minekube.connect.inject.CommonPlatformInjector;
 import com.minekube.connect.module.ClientsModule;
@@ -45,58 +42,22 @@ import com.minekube.connect.module.PostInitializeModule;
 import com.minekube.connect.register.WatcherRegister;
 import com.minekube.connect.tunnel.Tunneler;
 import com.minekube.connect.util.Metrics;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.UUID;
 
 public class ConnectPlatform {
     private static final String DOMAIN_SUFFIX = ".play.minekube.net";
 
     private static final UUID KEY = UUID.randomUUID();
-    private final ConnectApi api;
-    private final PlatformInjector injector;
-
-    private final ConnectLogger logger;
-
-    private ConnectConfig config;
-    private Injector guice;
-
-    @Inject
-    public ConnectPlatform(
-            ConnectApi api,
-            PlatformInjector platformInjector,
-            ConnectLogger logger,
-            Injector guice) {
-
-        this.api = api;
-        this.injector = platformInjector;
-        this.logger = logger;
-        this.guice = guice;
-    }
+    @Inject private PlatformInjector injector;
+    @Inject private ConnectConfig config;
+    @Inject private Injector guice;
+    @Inject private ConnectLogger logger;
 
     @Inject
     public void init(
-            @Named("dataDirectory") Path dataDirectory,
-            ConfigLoader configLoader,
-            ConfigHolder configHolder,
+            ConnectApi api,
             PacketHandlers packetHandlers) {
 
-        if (!Files.isDirectory(dataDirectory)) {
-            try {
-                Files.createDirectory(dataDirectory);
-            } catch (IOException exception) {
-                logger.error("Failed to create the data folder", exception);
-                throw new RuntimeException("Failed to create the data folder", exception);
-            }
-        }
-
-        config = configLoader.load();
-        if (config.isDebug()) {
-            logger.enableDebug();
-        }
-
-        configHolder.set(config);
         guice = guice.createChildInjector(
                 new ConfigLoadedModule(config),
                 new ClientsModule()
@@ -106,20 +67,15 @@ public class ConnectPlatform {
         InstanceHolder.set(api, this.injector, packetHandlers, clients, KEY);
     }
 
-    public boolean enable(Module... postInitializeModules) {
+    public void enable(Module... postInitializeModules) throws RuntimeException {
         if (injector == null) {
-            logger.error("Failed to find the platform injector!");
-            return false;
+            throw new RuntimeException("Failed to find the platform injector!");
         }
 
         try {
-            if (!injector.inject()) { // TODO && !bootstrap.getGeyserConfig().isUseDirectConnection()
-                logger.error("Failed to inject the packet listener!");
-                return false;
-            }
+            injector.inject();
         } catch (Exception exception) {
-            logger.error("Failed to inject the packet listener!", exception);
-            return false;
+            throw new RuntimeException("Failed to inject the packet listener!", exception);
         }
 
         this.guice = guice.createChildInjector(new PostInitializeModule(postInitializeModules));
@@ -131,8 +87,6 @@ public class ConnectPlatform {
             logger.info("Super endpoints: " + String.join(", ", config.getSuperEndpoints()));
         }
         logger.info("Your public address: " + config.getEndpoint() + DOMAIN_SUFFIX);
-
-        return true;
     }
 
     public boolean disable() {

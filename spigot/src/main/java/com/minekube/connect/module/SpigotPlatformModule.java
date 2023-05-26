@@ -31,6 +31,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 import com.minekube.connect.SpigotPlugin;
 import com.minekube.connect.api.ConnectApi;
 import com.minekube.connect.api.logger.ConnectLogger;
@@ -47,6 +48,7 @@ import com.minekube.connect.util.LanguageManager;
 import com.minekube.connect.util.SpigotCommandUtil;
 import com.minekube.connect.util.SpigotPlatformUtils;
 import com.minekube.connect.util.SpigotVersionSpecificMethods;
+import java.util.logging.Logger;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -58,19 +60,17 @@ public final class SpigotPlatformModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(SpigotPlugin.class).toInstance(plugin);
         bind(PlatformUtils.class).to(SpigotPlatformUtils.class);
+        bind(CommonPlatformInjector.class).to(SpigotInjector.class);
+        bind(Logger.class).annotatedWith(Names.named("logger")).toInstance(plugin.getLogger());
+        bind(ConnectLogger.class).to(JavaUtilConnectLogger.class);
     }
 
     @Provides
     @Singleton
     public JavaPlugin javaPlugin() {
         return plugin;
-    }
-
-    @Provides
-    @Singleton
-    public ConnectLogger logger(LanguageManager languageManager) {
-        return new JavaUtilConnectLogger(plugin.getLogger(), languageManager);
     }
 
     /*
@@ -103,7 +103,8 @@ public final class SpigotPlatformModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public CommonPlatformInjector platformInjector(ConnectLogger logger) {
+    @Named("isViaVersion")
+    public boolean isViaVersion(ConnectLogger logger) {
         final String VIAVERSION_DOWNLOAD_URL = "https://ci.viaversion.com/job/ViaVersion/";
         boolean isViaVersion = Bukkit.getPluginManager().getPlugin("ViaVersion") != null;
         if (isViaVersion) {
@@ -115,8 +116,7 @@ public final class SpigotPlatformModule extends AbstractModule {
                 isViaVersion = false;
             }
         }
-
-        return new SpigotInjector(logger, isViaVersion);
+        return isViaVersion;
     }
 
     @Provides

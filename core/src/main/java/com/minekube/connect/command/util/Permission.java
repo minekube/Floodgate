@@ -30,7 +30,7 @@ import static com.minekube.connect.command.util.PermissionDefault.TRUE;
 
 public enum Permission {
     COMMAND_MAIN("connect.command.connect", TRUE),
-    COMMAND_MAIN_FIREWALL(COMMAND_MAIN, "firewall", OP),
+    COMMAND_MAIN_VERSION(COMMAND_MAIN, "version", OP),
     COMMAND_LINK("connect.command.linkaccount", TRUE),
     COMMAND_UNLINK("connect.command.unlinkaccount", TRUE),
     COMMAND_WHITELIST("connect.command.fwhitelist", OP),

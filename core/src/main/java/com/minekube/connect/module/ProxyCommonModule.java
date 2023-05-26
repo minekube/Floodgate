@@ -25,7 +25,6 @@
 
 package com.minekube.connect.module;
 
-import build.buf.gen.minekube.connect.v1alpha1.ConnectServiceClientInterface;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -44,12 +43,19 @@ public final class ProxyCommonModule extends CommonModule {
     protected void configure() {
         super.configure();
         bind(SimpleConnectApi.class).to(ProxyConnectApi.class);
+        bind(ProxyConnectApi.class).in(Singleton.class);
+    }
+
+    @Provides
+    @Singleton
+    public ProxyConnectConfig proxyConnectConfig(ConnectConfig config) {
+        return (ProxyConnectConfig) config;
     }
 
     @Provides
     @Singleton
     @Named("configClass")
-    public Class<? extends ConnectConfig> configClass() {
+    public Class<? extends ConnectConfig> connectConfigClass() {
         return ProxyConnectConfig.class;
     }
 }
